@@ -1,6 +1,6 @@
 import torch
 
-from tester import Tester
+from .tester import Tester
 
 # https://github.com/pytorch/pytorch/pull/6307/files#diff-9996665f82f52030836eb8657057cfadR1312
 test_cases = [

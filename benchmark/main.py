@@ -4,7 +4,7 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 
-from test_cases import test_cases
+from .test_cases import test_cases
 
 
 def plot(xs, profs):
@@ -19,7 +19,7 @@ def plot(xs, profs):
 
 
 def main():
-    output_dir = Path(".") / "result"
+    output_dir = Path(__file__).parent / "result"
     os.makedirs(output_dir, exist_ok=True)
 
     for test_case in test_cases:
