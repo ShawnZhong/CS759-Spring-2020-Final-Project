@@ -1,6 +1,8 @@
 import itertools
 import torch
 import time
+import matplotlib.pyplot as plt
+
 
 # Get minimal representation of a string
 def getminimal(terms):
@@ -93,22 +95,54 @@ def fast_einsum(equation, operands):
 
 def benchmark(equation, operands):
     print("benchmarking on equation " + equation + "\n")
+    total_einsum = 0
+    total_fast = 0
+    for i in range(10):
+        print("torch.einsum: ")
+        einsum_time = -time.perf_counter()
+        torch.einsum(equation, operands)
+        einsum_time += time.perf_counter()
+        if i >= 5:
+            total_einsum += einsum_time
 
-    print("torch.einsum: ")
-    tot = -time.perf_counter()
-    torch.einsum(equation, operands)
-    tot += time.perf_counter()
-    print("time: " + str(tot) + " ms\n")
-
-    print("fast_einsum:")
-    tot = -time.perf_counter()
-    fast_einsum(equation, operands)
-    tot += time.perf_counter()
-    print("time: " + str(tot) + " ms\n")
+        print("fast_einsum:")
+        fast_time = -time.perf_counter()
+        fast_einsum(equation, operands)
+        fast_time += time.perf_counter()
+        if i >= 5:
+            total_fast += fast_time
+    return total_einsum / 5, total_fast / 5
 
 
-benchmark('bdik,acaj,ikab,ajac,ikbd->abjk', [torch.rand(12, 12, 12, 12) for i in range(5)])
+def plot_time(xs, fast_ein_time, ein_time, plot_title):
+    plt.plot(xs, fast_ein_time, label='fast einsum')
+    plt.plot(xs, ein_time, label='Pytorch einsum')
+    title = plot_title
+    plt.title(title)
+    plt.yscale('log', basey=10)
+    plt.xticks(xs)
+    plt.xlabel("n")
+    plt.ylabel("Time (ms)")
+    plt.legend()
+    plt.savefig( f"./path_opt/results/{title}.png")
+    plt.show(block=False)
+    plt.close() 
 
-benchmark("ab,cd,ef,fe,dc,ba->a", [torch.rand(10, 10), torch.rand(15, 15),
-                                   torch.rand(90, 90), torch.rand(90, 90),
-                                   torch.rand(15, 15), torch.rand(10, 10)])
+y1s = []
+y1_ein = []
+y2s = []
+y2_ein = []
+for dim in range(1, 20):
+    einsum_time, fast_time = benchmark('bdik,acaj,ikab,ajac,ikbd->abjk', [torch.rand(dim, dim, dim, dim) for i in range(5)])
+    y1_ein.append(einsum_time)
+    y1s.append(fast_time)
+    einsum_time, fast_time = benchmark("ab,cd,ef,fe,dc,ba->a", [torch.rand(dim, dim), torch.rand(dim, dim),
+                                    torch.rand(dim, dim), torch.rand(dim, dim),
+                                    torch.rand(dim, dim), torch.rand(dim, dim)])
+    y2_ein.append(einsum_time)
+    y2s.append(fast_time)
+
+
+x = [i for i in range(1, 20)]
+plot_time(x, y1s, y1_ein, "bdik,acaj,ikab,ajac,ikbd->abjk")
+plot_time(x, y2s, y2_ein, "ab,cd,ef,fe,dc,ba->a")
