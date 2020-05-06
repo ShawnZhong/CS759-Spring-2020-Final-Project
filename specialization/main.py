@@ -1,7 +1,6 @@
 import torch
 import time
 torch.manual_seed(0)
-from benchmark.test_cases import test_cases
 import matplotlib.pyplot as plt
 
 op_mapping = {
