@@ -1,54 +1,68 @@
-#
-# C_{m,u,n,v} = alpha * A_{m,h,k,n} * B_{u,k,v,h} + beta * C_{m,u,n,v}
-#
 import cupy
-import numpy
 from cupy import cutensor
-from cupy.cuda import stream
+import time
 import torch
+import os
+from pathlib import Path
+import matplotlib.pyplot as plt
 
-dtype = numpy.float32
+# 'abcd,aefd->aefbc'
 
-mode_a = ('m', 'h', 'k', 'n')
-mode_b = ('u', 'k', 'v', 'h')
-mode_c = ('m', 'u', 'n', 'v')
+def einsum_cutensor(n):
+    a = cupy.random.rand(n, n, n, n)
+    b = cupy.random.rand(n, n, n, n)
 
-extent = {'m': 96, 'n': 96, 'u': 96, 'v': 64, 'h': 64, 'k': 64}
+    arr_out = cupy.empty([n, n, n, n, n], cupy.float64)
+    arr0 = cupy.ascontiguousarray(a)
+    arr1 = cupy.ascontiguousarray(b)
+    desc_0 = cutensor.create_tensor_descriptor(arr0)
+    desc_1 = cutensor.create_tensor_descriptor(arr1)
+    desc_out = cutensor.create_tensor_descriptor(arr_out)
+    arr_out = cutensor.contraction(1.0,
+                                arr0, desc_0, list(ord(c) for c in "abcd"),
+                                arr1, desc_1, list(ord(c) for c in "aefd"),
+                                0.0,
+                                arr_out, desc_out, list(ord(c) for c in "aefbc"))
 
-a = cupy.random.random([extent[i] for i in mode_a])
-b = cupy.random.random([extent[i] for i in mode_b])
-c = cupy.random.random([extent[i] for i in mode_c])
-a = a.astype(dtype)
-b = b.astype(dtype)
-c = c.astype(dtype)
 
-a = torch.rand(10, 10).cuda().data_ptr()
+def einsum_pytorch(n):
+    a = torch.rand(n, n, n, n)
+    b = torch.rand(n, n, n, n)
+    torch.einsum("abcd,aefd->aefbc", a, b)
 
-desc_a = cutensor.create_tensor_descriptor(a)
-desc_b = cutensor.create_tensor_descriptor(b)
-desc_c = cutensor.create_tensor_descriptor(c)
+def benchmark(func, n):
+    for _ in range(3):
+        func(n)
+    start = time.time()
+    for _ in range(10):
+        func(n)
+    end = time.time()
+    return (end - start) / 10
 
-alpha = 1.1
-beta = 1.0
 
-# rehearsal
-c = cutensor.contraction(alpha, a, desc_a, mode_a, b, desc_b, mode_b,
-                         beta, c, desc_c, mode_c)
+def main():
+    output_dir = Path(__file__).parent
+    os.makedirs(output_dir, exist_ok=True)
 
-ev_start = stream.Event()
-ev_end = stream.Event()
-st = stream.Stream()
-with st:
-    # measurement
-    ev_start.record()
-    c = cutensor.contraction(alpha, a, desc_a, mode_a, b, desc_b, mode_b,
-                             beta, c, desc_c, mode_c)
-    ev_end.record()
-st.synchronize()
+    xs = range(2, 49, 2)
 
-elapsed_ms = stream.get_elapsed_time(ev_start, ev_end)
-total_flops = 2 * numpy.prod(numpy.array(list(extent.values())))
+    for func in (einsum_cutensor, einsum_pytorch):
+        times = [benchmark(func, n) for n in xs]
+        plt.plot(xs, times, label=func.__name__)
+    
 
-print('dtype: {}'.format(numpy.dtype(dtype).name))
-print('time (ms): {}'.format(elapsed_ms))
-print('GFLOPS: {}'.format(total_flops / elapsed_ms / 1e6))
+    # title = f"{test_case}"
+    # plt.title(title)
+    # plt.yscale('log', basey=10)
+    # plt.xscale('log', basex=2)
+    plt.xticks(xs)
+    plt.xlabel("n")
+    plt.ylabel("Time (ms)")
+    plt.legend()
+
+    plt.savefig(output_dir / "result.png", dpi=300)
+    plt.show(block=False)
+    plt.close()
+
+if __name__ == "__main__":
+    main()
