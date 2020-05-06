@@ -2,14 +2,8 @@ import torch
 import time
 torch.manual_seed(0)
 from benchmark.test_cases import test_cases
+import matplotlib.pyplot as plt
 
-equation = "ij,jk->ik"
-lhs, rhs = equation.split("->")
-ops = lhs.split(",")
-ops.append(rhs)
-
-# for e in test_cases:
-#     print(e.equation, e.native_func)
 op_mapping = {
     repr(['a','']): torch.sum,
     repr(['a', 'a', '']): torch.dot,
@@ -21,6 +15,7 @@ op_mapping = {
     repr(['ab', 'ab','ab']): torch.mul,
     repr(['ab', 'b', 'a']): torch.mv,
     repr(['ab', 'bc', 'ac']): torch.matmul,
+    repr(['abc', 'acd', 'abd']): torch.bmm,
     repr(['ab', 'bc', 'cd', 'ad']): torch.chain_matmul,
 }
 def parse_input(input_list):
@@ -51,27 +46,83 @@ def einsum_spec(input_string, tensor_list):
     parsed = parse_input(lhs)
     return op_mapping[repr(parsed)](*tensor_list)
 
-if __name__ == "__main__":
-    a = torch.rand(50000)
-    # einsum_spec('i->', [a])
-    start = time.time()
-    einsum_spec('i,i->', [a, a])
-    end = time.time()
-    print(end - start)
-    start = time.time()
-    torch.einsum('i,i->', a,a)
-    end = time.time()
-    print(end - start)
-    # einsum_spec('i,i->i', [a, a])
-    # einsum_spec('i,j->ij', [a, a])
-    
-    b = torch.rand(500, 500) 
-    einsum_spec('ij->ji', [b])
-    einsum_spec('ij->j', [b])
-    einsum_spec('ij->i', [b])
-    einsum_spec('ij,ij->ij', [b, b])
-    einsum_spec('ij,j->i', [b, a])
-    einsum_spec('ij,jk->ik', [b, b])
+def tester_plot(input_string,  use_cuda, plot_title):
+    device = torch.device("cuda" if use_cuda else "cpu")
+    ys = []
+    ys_einsum= []
+    if use_cuda:
+        for i in range(10):
+            
+            dim_list = [len(e) for e in input_string.split('->')[0].split(",")]
+            size_list = []
+            
+            for dim in dim_list:
+                size_list.append([2**i for _ in range(dim)])
+            
+            tensor_list = [torch.rand(size, device=device) for size in size_list]
+            
+            total_time = 0
+            total_time_einsum = 0
+            for j in range(10):
+                start = time.time()
+                result = einsum_spec(input_string, tensor_list)
+                torch.cuda.synchronize(device)
+                end = time.time()
+                if j >= 5: 
+                    total_time += (end - start)
 
-    einsum_spec('ab,bc,cd->ad', [b, b, b,b])
-    # einsum_spec('ij, jk->', [b, b])
+                start = time.time()
+                result = torch.einsum(input_string, *tensor_list)
+                torch.cuda.synchronize(device)
+                end = time.time()
+                if j >= 5:
+                    total_time_einsum += (end - start)
+            ys.append(total_time / 5)
+            ys_einsum.append(total_time_einsum/5)
+        xs = [pow(2, i) for i in range(10)]
+        plt.plot(xs, ys, label='native')
+        plt.plot(xs, ys_einsum, label='einsum')
+        title = plot_title
+        plt.title(title)
+        plt.yscale('log', basey=10)
+        plt.xscale('log', basex=2)
+        plt.xticks(xs)
+        plt.xlabel("n")
+        plt.ylabel("Time (ms)")
+        plt.legend()
+        plt.savefig( f"./specialization/results/{title}.png")
+        plt.show(block=False)
+        plt.close() 
+    
+
+if __name__ == "__main__":
+
+
+
+    # compare GPU 
+    device = torch.device("cuda")
+    tester_plot('i->', True, "sum")
+    tester_plot('i,i->', True, "dot")
+    tester_plot("i,i->i", True, "vector element-wise mul")
+    tester_plot("i,j->ij", True, "outer")
+    # Matrix
+    tester_plot("ij->ji", True, "transpose")
+    tester_plot( "ij->j", True, "row sum")
+    tester_plot("ij->i", True, "col sum")
+    tester_plot("ij,ij->ij", True, "matrix element-wise mul")
+    tester_plot( "ij,j->i", True, "matrix vector multiplication")
+    tester_plot("ij,jk->ik", True, "matmul")
+    # Tensor
+    tester_plot("aij,ajk->aik", True, "batch matmul")
+    tester_plot("ab,bc,cd->ad", True, "chain matmul")
+
+    
+    
+        
+
+
+    
+
+
+
+
