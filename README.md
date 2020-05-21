@@ -4,7 +4,7 @@ Optimizing Einstein Sum Implementation in PyTorch with Specialization, Path Sear
 
 ## Links
 
-- ME/CS 759 Main repo: https://github.com/ShawnZhong/CS759-Spring-2020
+- ME/CS 759 Main repo: [https://github.com/ShawnZhong/CS759-Spring-2020](https://github.com/ShawnZhong/CS759-Spring-2020)
 
 
 ## Folder Structure
