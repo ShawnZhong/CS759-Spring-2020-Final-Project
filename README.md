@@ -11,19 +11,21 @@ Optimizing Einstein Sum Implementation in PyTorch with Specialization, Path Sear
 
 - Reports
 
+  - [Final Project.pdf](Final%20Project.pdf)
+  
+  - [Intermediate Report.pdf](Intermediate%20Report.pdf)
+    
   - [Project Proposal.pdf](Project%20Proposal.pdf)
 
-  - [Intermediate Report.pdf](Intermediate%20Report.pdf)
+- Code
 
-  - [Final Project.pdf](Final%20Project.pdf)
+  - [benchmark](benchmark): benchmark scripts and results
 
-- [benchmark](benchmark): benchmark scripts and results
+  - [cutensor](cutensor): cuTENSOR implementation of einsum
 
-- [cutensor](cutensor): cuTENSOR implementation of einsum
+  - [path_opt](path_opt): path searching algorithm, implemented by [RobeZH](https://github.com/541736690)
 
-- [path_opt](path_opt): path searching algorithm, implemented by [RobeZH](https://github.com/541736690)
-
-- [specialization](specialization): einsum specialization, implemented by [YuhanLiu11](https://github.com/YuhanLiu11)
+  - [specialization](specialization): einsum specialization, implemented by [YuhanLiu11](https://github.com/YuhanLiu11)
 
 
 ## Other CS/ME 759 Final Projects Available on GitHub
