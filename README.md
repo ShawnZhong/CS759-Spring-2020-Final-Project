@@ -28,28 +28,50 @@ Optimizing Einstein Sum Implementation in PyTorch with Specialization, Path Sear
 
 ## Other CS/ME 759 Final Projects Available on GitHub
 
-- [https://github.com/BinQuake/CS759_final_proj](https://github.com/BinQuake/CS759_final_proj)
+- Spring 2020
 
-- [https://github.com/collielimabean/ME759-F17-FinalProject](https://github.com/collielimabean/ME759-F17-FinalProject)
+  - https://github.com/dgschmitz17/ME759_FinalProject_BlankSchmitz
 
-- [https://github.com/devinsm/cs759Final](https://github.com/devinsm/cs759Final)
+  - https://github.com/elisaoh/ECE759 
 
-- [https://github.com/elliottbiondo/ME759_final_project](https://github.com/elliottbiondo/ME759_final_project)
+  - https://github.com/Kaiweitu/ME759_Final_Project
+  
+  - https://github.com/NoahMattV/image-upscaling
+  
+  - https://github.com/realXGong/ME759-final
+  
+  - https://github.com/sandersyen/ME759-Final-Project
+  
+  - https://github.com/schen921/me759finalproject
+  
+  - https://github.com/tlfua/ME759_final_project
+  
+  - https://github.com/wu0607/2020-Spring-ME759-FinalProject
 
-- [https://github.com/JerryHu1994/GPU-Implementation-of-Order-Independent-Pixel-based-Texture-Synthesis](https://github.com/JerryHu1994/GPU-Implementation-of-Order-Independent-Pixel-based-Texture-Synthesis)
+- Past projects
 
-- [https://github.com/Kagami-sama/UWMadison_ME759_FinalProject](https://github.com/Kagami-sama/UWMadison_ME759_FinalProject)
+  - [https://github.com/BinQuake/CS759_final_proj](https://github.com/BinQuake/CS759_final_proj)
 
-- [https://github.com/krovchen/ME759_FinalProject](https://github.com/krovchen/ME759_FinalProject)
+  - [https://github.com/collielimabean/ME759-F17-FinalProject](https://github.com/collielimabean/ME759-F17-FinalProject)
 
-- [https://github.com/ljyang17/759finalproject](https://github.com/ljyang17/759finalproject)
+  - [https://github.com/devinsm/cs759Final](https://github.com/devinsm/cs759Final)
 
-- [https://github.com/paragpathak2006/ME759FinalProject](https://github.com/paragpathak2006/ME759FinalProject)
+  - [https://github.com/elliottbiondo/ME759_final_project](https://github.com/elliottbiondo/ME759_final_project)
 
-- [https://github.com/raunakbardia/GALS_Advection_ME759](https://github.com/raunakbardia/GALS_Advection_ME759)
+  - [https://github.com/JerryHu1994/GPU-Implementation-of-Order-Independent-Pixel-based-Texture-Synthesis](https://github.com/JerryHu1994/GPU-Implementation-of-Order-Independent-Pixel-based-Texture-Synthesis)
 
-- [https://github.com/sapangupta/759-sapangupta-finalproject](https://github.com/sapangupta/759-sapangupta-finalproject)
+  - [https://github.com/Kagami-sama/UWMadison_ME759_FinalProject](https://github.com/Kagami-sama/UWMadison_ME759_FinalProject)
 
-- [https://github.com/tvdmitrii/ME759_FinalProject](https://github.com/tvdmitrii/ME759_FinalProject)
+  - [https://github.com/krovchen/ME759_FinalProject](https://github.com/krovchen/ME759_FinalProject)
 
-- [https://github.com/WenFuLee/CS-759-High-Performance-Computing](https://github.com/WenFuLee/CS-759-High-Performance-Computing)
+  - [https://github.com/ljyang17/759finalproject](https://github.com/ljyang17/759finalproject)
+
+  - [https://github.com/paragpathak2006/ME759FinalProject](https://github.com/paragpathak2006/ME759FinalProject)
+
+  - [https://github.com/raunakbardia/GALS_Advection_ME759](https://github.com/raunakbardia/GALS_Advection_ME759)
+
+  - [https://github.com/sapangupta/759-sapangupta-finalproject](https://github.com/sapangupta/759-sapangupta-finalproject)
+
+  - [https://github.com/tvdmitrii/ME759_FinalProject](https://github.com/tvdmitrii/ME759_FinalProject)
+
+  - [https://github.com/WenFuLee/CS-759-High-Performance-Computing](https://github.com/WenFuLee/CS-759-High-Performance-Computing)
